@@ -4,9 +4,9 @@ import { layout1, layout2 } from "./Samples";
 
 import { DragDropContextProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import Card from './Card'
 
-import {getUITree} from './mvu'
+import Card from './Card'
+import {Slate} from './mvu'
 
 class App extends Component {
   state = { code: <strong>Hello World!</strong> };
@@ -38,8 +38,8 @@ class App extends Component {
             <Card text="dragme" />
             <div>cantdragme</div>
           </Col>
-        </Row>        
-        <div>{getUITree()}</div>
+        </Row>      
+        <Slate />          
         </DragDropContextProvider>
         {/*this.state.code*/}
       </div>

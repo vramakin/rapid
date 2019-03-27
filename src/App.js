@@ -6,7 +6,7 @@ import { DragDropContextProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
 import Card from './Card'
-import {Slate} from './mvu'
+import Slate from './mvu'
 
 class App extends Component {
   state = { code: <strong>Hello World!</strong> };

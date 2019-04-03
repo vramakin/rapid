@@ -1,7 +1,7 @@
 import React from "react";
-import { DragSource } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
 import { createStore } from 'redux'
-import { connect, Provider } from 'react-redux'
+import { connect } from 'react-redux'
 
 
 /*
@@ -74,7 +74,7 @@ function slateApp(state = initialState, action) {
   }
 }
 
-const store = createStore(slateApp)
+export const store = createStore(slateApp)
 
 console.log(store.getState())
 
@@ -84,7 +84,7 @@ const unsubscribe = store.subscribe(() => console.log(store.getState()))
 
 // Dispatch some actions
 
-const getUniqueID = ()=>(new Date()).getTime()
+export const getUniqueID = ()=>(new Date()).getTime()
 
 let testElem = {type: "div", props: null, children: {}}
 testElem.children[ getUniqueID()] = { type: "text", value: "dynamic addition works" } 
@@ -93,7 +93,22 @@ store.dispatch(addElement(2, testElem))
 
 unsubscribe()
 
-const FuncSlate = props=> getComponent(props.UITREE)
+
+const slateTarget = {
+  drop(props) {
+    store.dispatch(addElement(2, testElem))
+  },
+}
+
+function collect(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+  }
+}
+
+
+const FuncSlate = props=> props.connectDropTarget(getComponent(props.UITREE))
 
 const mapStateToProps = state => {
   return {
@@ -109,12 +124,11 @@ const mapStateToProps = state => {
 //   }
 // }
 
-const Slate = connect(
+export const Slate = connect(
   mapStateToProps,
   null
-)(FuncSlate)
+)(DropTarget("draggable", slateTarget, collect)(FuncSlate))
 
-export default ()=><Provider store={store}><Slate /></Provider>
 
 const getComponent = e => {
 	const genericDragSource = {
@@ -139,7 +153,7 @@ const getComponent = e => {
 
 	return e.type === "text"
 		? e.value
- 		: React.createElement(DragSource("draggable", genericDragSource, collect)(genericDraggable), e.props, [])
+ 		: <span>{React.createElement(DragSource("draggable", genericDragSource, collect)(genericDraggable), e.props, [])}</span>
 }
 
 // const squareTarget = {

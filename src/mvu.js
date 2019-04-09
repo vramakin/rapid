@@ -5,24 +5,30 @@ import { connect } from 'react-redux'
 
 
 /*
- * actions
+ * standalone utils
  */
 
-export const ADD_ELEMENT = 'ADD_ELEMENT'
+export const getUniqueID = ()=>(new Date()).getTime()
+
+let testElem = {type: "div", props: null, children: {}}
+testElem.children[ getUniqueID()] = { type: "text", value: "dynamic addition works" }
+
+const deepCloneUITree = o=> JSON.parse(JSON.stringify(o))
 
 
 /*
- * action creators
+ * REDUX
  */
 
-export function addElement(id, child) {
+export const ADD_ELEMENT = 'ADD_ELEMENT' //action
+
+
+export function addElement(id, child) {  //action creator
   return { type: ADD_ELEMENT, id, child }
 }
 
 
-//reducers
-
-const initialState = {
+const initialState = {  //initial state
 		lastId:10,
 		UITREE:{
 			type:"root",
@@ -48,9 +54,8 @@ const initialState = {
 		}
 	}
 
-const deepCloneUITree = o=> JSON.parse(JSON.stringify(o))
 
-function slateApp(state = initialState, action) {
+function slateDataModel(state = initialState, action) { //reducer
   switch (action.type) {
     case ADD_ELEMENT:
     {
@@ -74,33 +79,29 @@ function slateApp(state = initialState, action) {
   }
 }
 
-export const store = createStore(slateApp)
 
-console.log(store.getState())
-
-// Every time the state changes, log it
-// Note that subscribe() returns a function for unregistering the listener
-const unsubscribe = store.subscribe(() => console.log(store.getState()))
-
-// Dispatch some actions
-
-export const getUniqueID = ()=>(new Date()).getTime()
-
-let testElem = {type: "div", props: null, children: {}}
-testElem.children[ getUniqueID()] = { type: "text", value: "dynamic addition works" } 
-
-store.dispatch(addElement(2, testElem))
-
-unsubscribe()
+const mapStateToProps = state => { // function required for react-redux
+  return {
+    UITREE: state.UITREE
+  }
+}
 
 
-const slateTarget = {
-  drop(props) {
+export const store = createStore(slateDataModel) //store
+
+
+/*
+ * DnD
+ */
+
+const slateTarget = { //what happens when drop occurs
+  drop(props, monitor) {
+  	console.log(props)
     store.dispatch(addElement(2, testElem))
   },
 }
 
-function collect(connect, monitor) {
+function collect(connect, monitor) { // some function required for drop
   return {
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver(),
@@ -108,139 +109,43 @@ function collect(connect, monitor) {
 }
 
 
-const FuncSlate = props=> props.connectDropTarget(getComponent(props.UITREE))
+/*
+ * Putting redux and DnD together into a DnD'able redux based component
+ */
 
-const mapStateToProps = state => {
-  return {
-    UITREE: state.UITREE
-  }
+const FuncSlate = props=> {
+	const getComponent = (e,id) => { // a function that converts a data element to a draggable react component
+		const genericDragSource = {
+		  beginDrag(props) {
+		  	console.log(props)
+		    return {		    
+		      id: props.id
+		    }
+		  }
+		}
+
+		function collect(connect, monitor) {
+		  return {
+		    connectDragSource: connect.dragSource(),
+		    isDragging: monitor.isDragging()
+		  };
+		}
+
+		function genericDraggable({ isDragging, connectDragSource, id }) {
+		  return connectDragSource(
+		    React.createElement(e.type, e.props, Object.keys(e.children).map(k => getComponent(e.children[k], k))))
+		}
+
+		return e.type === "text"
+			? e.value
+	 		: <span>{React.createElement(DragSource("draggable", genericDragSource, collect)(genericDraggable), {id:id, ...e.props}, [])}</span>
+	}
+
+	return props.connectDropTarget(getComponent(props.UITREE))
 }
 
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     onTodoClick: id => {
-//       dispatch(toggleTodo(id))
-//     }
-//   }
-// }
 
 export const Slate = connect(
   mapStateToProps,
   null
 )(DropTarget("draggable", slateTarget, collect)(FuncSlate))
-
-
-const getComponent = e => {
-	const genericDragSource = {
-	  beginDrag(props) {
-	    return {
-	      text: props.text
-	    }
-	  }
-	}
-
-	function collect(connect, monitor) {
-	  return {
-	    connectDragSource: connect.dragSource(),
-	    isDragging: monitor.isDragging()
-	  };
-	}
-
-	function genericDraggable({ isDragging, connectDragSource, text }) {
-	  return connectDragSource(
-	    React.createElement(e.type, e.props, Object.keys(e.children).map(k => getComponent(e.children[k]))))
-	}
-
-	return e.type === "text"
-		? e.value
- 		: <span>{React.createElement(DragSource("draggable", genericDragSource, collect)(genericDraggable), e.props, [])}</span>
-}
-
-// const squareTarget = {
-//   drop(props) {
-//     lastId+=1
-//     addChild(props.id, {
-//         type: "div",
-//         props: {style:{backgroundColor:'blue'}},
-//         children: { lastId: { type: "text", value: "it works" } }
-//       })
-//   },
-// }
-
-// function collect(connect, monitor) {
-//   return {
-//     connectDropTarget: connect.dropTarget(),
-//     isOver: monitor.isOver(),
-//   }
-// }
-// 
-
-// let lastId = 10
-
-// export class Slate extends React.Component {
-// 	state = {
-// 		UITREE:{
-// 			type:"root",
-// 			children:
-// 			{
-// 			1: {
-// 				type: "div",
-// 				props: {style:{backgroundColor:'red', padding:"1em"}},
-// 				children: {
-// 					2: {
-// 						type: "div",
-// 						props: {style:{backgroundColor:'blue'}},
-// 						children: { 3: { type: "text", value: "it works" } }
-// 					},
-// 					4: {
-// 						type: "div",
-// 						props: null,
-// 						children: { 5: { type: "text", value: "deletion works" } }
-// 					}
-// 				}
-// 			}
-// 		}
-// 		}
-// 	}
-
-// 	// removeElement = id => {
-// 	// 	const removeElement_ = (root, id) => {
-// 	// 		if (UITREE[root].children[id]) delete UITREE[root].children[id];
-// 	// 		else UITREE[root].children.forEach(e => removeElement_(e.id, id));
-// 	// 	};
-// 	// 	removeElement_(1, id);
-// 	// };
-
-// 	addChild = (id, child) => {		
-// 		let clone = deepCloneUITree(this.state.UITREE)		
-// 		const addChild_ = (obj, id, child) => {			
-// 			if (obj.children[id]) {
-// 				lastId += 1;
-// 				obj.children[id].children[lastId] = child;				
-// 			} else {						
-// 				obj.children && Object.keys(obj.children).forEach(k =>
-// 					{						
-// 						addChild_(obj.children[k], id, child)
-// 					}
-// 				);
-// 			}
-// 		}
-// 		addChild_(clone, id, child);		
-// 		this.setState({UITREE:clone})
-// 	};
-
-
-
-// 	componentDidMount() {		
-// 		this.addChild(2, {
-// 						type: "div",
-// 						props: null,
-// 						children: { lastId: { type: "text", value: "dynamic addition works" } }
-// 					})
-// 		lastId+=1
-// 	}
-
-// 	render() {
-// 		return <div>{getComponent(this.state.UITREE.children[1],null,[])}</div>
-// 	}
-// }

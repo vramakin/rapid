@@ -1,13 +1,12 @@
 import React from "react";
-
 import { DragSource } from 'react-dnd';
 /**
  * Implements the drag source contract.
  */
-const cardSource = {
+const divDragSource = {
   beginDrag(props) {
     return {
-      text: props.text
+      type: props.type
     };
   }
 };
@@ -22,7 +21,7 @@ function collect(connect, monitor) {
   };
 }
 
-function Card({ isDragging, connectDragSource, text }) {
+function RDiv({ isDragging, connectDragSource, text }) {
   return connectDragSource(
     <div style={{ opacity: isDragging ? 0.5 : 1 }}>
       {text}
@@ -30,4 +29,4 @@ function Card({ isDragging, connectDragSource, text }) {
   );
 }
 
-export default DragSource("draggable", cardSource, collect)(Card)
+export default DragSource("draggable", divDragSource, collect)(RDiv)

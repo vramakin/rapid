@@ -1,13 +1,13 @@
 import React from "react";
-
+import { Button } from "antd";
 import { DragSource } from 'react-dnd';
 /**
  * Implements the drag source contract.
  */
-const cardSource = {
+const buttonDragSource = {
   beginDrag(props) {
     return {
-      text: props.text
+      type: props.type
     };
   }
 };
@@ -22,12 +22,10 @@ function collect(connect, monitor) {
   };
 }
 
-function Card({ isDragging, connectDragSource, text }) {
+function RButton({ isDragging, connectDragSource, text }) {
   return connectDragSource(
-    <div style={{ opacity: isDragging ? 0.5 : 1 }}>
-      {text}
-    </div>
+    <span><Button>DragMe</Button></span>
   );
 }
 
-export default DragSource("draggable", cardSource, collect)(Card)
+export default DragSource("draggable", buttonDragSource, collect)(RButton)

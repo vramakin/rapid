@@ -1,5 +1,9 @@
+/*
+ * thing that makes things dropped into it droppable
+ */
+
 import React from "react";
-import { DragSource, DropTarget } from 'react-dnd';
+import { DropTarget } from 'react-dnd';
 import { createStore } from 'redux'
 import { connect } from 'react-redux'
 
@@ -55,7 +59,7 @@ const initialState = {  //initial state
 	}
 
 
-function slateDataModel(state = initialState, action) { //reducer
+function slateReducer(state = initialState, action) { //reducer
   switch (action.type) {
     case ADD_ELEMENT:
     {
@@ -87,7 +91,7 @@ const mapStateToProps = state => { // function required for react-redux
 }
 
 
-export const store = createStore(slateDataModel) //store
+export const store = createStore(slateReducer) //store
 
 
 /*
@@ -96,8 +100,7 @@ export const store = createStore(slateDataModel) //store
 
 const slateTarget = { //what happens when drop occurs
   drop(props, monitor) {
-  	console.log(props)
-    store.dispatch(addElement(props.id, testElem))
+    store.dispatch(addElement(props.id, {type:monitor.getItem().type, props:null, children:[]}))
   },
 }
 
@@ -115,28 +118,14 @@ function collectDrop(connect, monitor) { // some function required for drop
 
 const FuncSlate = props=> {
 	const getComponent = (e,id) => { // a function that converts a data element to a draggable react component
-		const genericDragSource = {
-		  beginDrag(props) {		  	
-		    return {		    
-		      id: props.id
-		    }
-		  }
-		}
-
-		function collectDrag(connect, monitor) {
-		  return {
-		    connectDragSource: connect.dragSource(),
-		    isDragging: monitor.isDragging()
-		  };
-		}
-
-		function genericDraggable(props) {
-		  return props.connectDropTarget(React.createElement(e.type, e.props, Object.keys(e.children).map(k => getComponent(e.children[k], k))))
+		function genericDroppable(props) {
+			console.log(e.type)
+		  return props.connectDropTarget(<span>{React.createElement(e.type, e.props, Object.keys(e.children).map(k => getComponent(e.children[k], k)))}</span>)
 		}
 
 		return e.type === "text"
 			? e.value
-	 		: <span>{React.createElement(DropTarget("draggable", slateTarget, collectDrop)(genericDraggable), {id:id, ...e.props}, [])}</span>
+	 		: <span>{React.createElement(DropTarget("draggable", slateTarget, collectDrop)(genericDroppable), {id:id, ...e.props}, [])}</span>
 	}
 
 	return getComponent(props.UITREE)

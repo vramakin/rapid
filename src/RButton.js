@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Icon } from "antd";
 import { DragSource, DropTarget } from "react-dnd";
+import {store, INSERT_CODE_AT} from './App'
 
 
 /**
@@ -27,7 +28,8 @@ function collect(connect, monitor) {
 
 const slateTarget = { //what happens when drop occurs
   drop(props, monitor) {
-    console.log('droppped', monitor.getItem())
+    console.log('droppped', monitor.getItem(), 'props', props)
+    store.dispatch({type:INSERT_CODE_AT, code:monitor.getItem().code, pos:props.pos+16})
   },
 }
 

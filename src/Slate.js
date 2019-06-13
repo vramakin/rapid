@@ -28,7 +28,8 @@ export const ADD_ELEMENT = 'ADD_ELEMENT' //action
 
 
 export function addElement(id, child) {  //action creator
-  return { type: ADD_ELEMENT, id, child }
+	//console.log('id and child are ' ,id, child)
+  return { type: ADD_ELEMENT, id:id, child:child }
 }
 
 
@@ -75,6 +76,7 @@ function slateReducer(state = initialState, action) { //reducer
 				);
 			}
 		}	
+		//console.log('child is ', action.child)
 		addChild_(clone, action.id, action.child);		
 		return {lastId: state.lastId+1, UITREE:clone}
 	}
@@ -91,7 +93,7 @@ const mapStateToProps = state => { // function required for react-redux
 }
 
 
-export const store = createStore(slateReducer) //store
+export const store = createStore(slateReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()) //store
 
 
 /*
@@ -119,7 +121,8 @@ function collectDrop(connect, monitor) { // some function required for drop
 const FuncSlate = props=> {
 	const getComponent = (e,id) => { // a function that converts a data element to a draggable react component
 		function genericDroppable(props) {
-			console.log(e.type)
+			console.log('data element is', e)
+			console.log('state is', props)
 		  return props.connectDropTarget(<span>{React.createElement(e.type, e.props, Object.keys(e.children).map(k => getComponent(e.children[k], k)))}</span>)
 		}
 

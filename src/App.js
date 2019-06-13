@@ -1,6 +1,6 @@
 import React from "react";
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
-import {Row, Col, Button as IButton, Spin} from 'antd'
+import {Row, Col, Button as IButton, Avatar as IAvatar, Spin} from 'antd'
 import { DragDropContextProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { createStore } from 'redux'
@@ -8,9 +8,11 @@ import { connect } from 'react-redux'
 
 import Button from './RButton'
 import Icon from './RIcon'
+import Draggable from './Draggable'
 
+const Avatar = props=>React.createElement(Draggable, {type:IAvatar, ...props}, [])
 
-const scope = {Button, Spin, Icon}
+const scope = {Button, Spin, Icon, Avatar}
 
 const initialState = {code:"<div></div>"}
 
@@ -51,6 +53,7 @@ function _App(props) {
 				<Row style={{padding:"0.5em", backgroundColor:"#fdfdfd", borderBottom:"thin solid #ccc"}}>
 					<IButton size="small" onClick={()=>store.dispatch({type:ADD_CODE,code:`<Button pos={${props.code.length-6}}>Button</Button>`})}>Button</IButton>
 					<IButton size="small" onClick={()=>store.dispatch({type:ADD_CODE,code:"<Spin />"})}>Spin</IButton>
+					<IButton size="small" onClick={()=>store.dispatch({type:ADD_CODE,code:`<Avatar code='<Avatar icon="user" />' icon="user" />`})}>Avatar</IButton>
 					<IButton size="small" onClick={()=>store.dispatch({type:ADD_CODE,code:`<Icon code='<Icon type="filter" />' type="filter" />`})}>Icon</IButton>
 				</Row>			
 				<Row style={{marginTop:"1em"}}>

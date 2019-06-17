@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "antd";
 import { DragSource, DropTarget } from "react-dnd";
-import { store, INSERT_CODE_AT } from "./App";
+import { store, INSERT_CODE_AT, DELETE_BY_ID } from "./App";
 
 
 export const DnD = function(type) {
@@ -12,6 +12,7 @@ const buttonDragSource = {
   beginDrag(props) {
     return {
       code: props.code,
+      id: props.id
     };
   }
 };
@@ -30,11 +31,17 @@ const slateTarget = {
   //what happens when drop occurs
   drop(props, monitor) {
     console.log("droppped", monitor.getItem(), "props", props);
+
+    store.dispatch({
+      type: DELETE_BY_ID,      
+      id: monitor.getItem().id
+    })
+
     store.dispatch({
       type: INSERT_CODE_AT,
       code: monitor.getItem().code,
       id: props.id
-    });
+    })    
   }
 };
 
@@ -71,7 +78,10 @@ class Wrapper extends React.Component {
           >
             <Icon type="edit" />
             <Icon type="drag" />
-            <Icon type="delete" />
+            <Icon type="delete" onClick={()=>store.dispatch({
+      type: DELETE_BY_ID,      
+      id: this.props.id
+    })}/>
           </span>
           {React.createElement(type, this.props, this.props.children)}
         </span>

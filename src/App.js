@@ -12,13 +12,17 @@ const Avatar = DnD(IAvatar)
 const Button = DnD(IButton)
 const Icon = DnD(IIcon)
 const Spin = DnD(ISpin)
-const scope = { Button, Spin, Icon, Avatar };
+const RedDiv = DnD(p=><div style={{backgroundColor:"red", padding:"2em"}}>{p.children}</div>)
+const BlueDiv = DnD(p=><div style={{backgroundColor:"blue", padding:"2em"}}>{p.children}</div>)
+const GreenDiv = DnD(p=><div style={{backgroundColor:"green", padding:"2em"}}>{p.children}</div>)
+const Dyna = DnD(class D extends React.Component{state={n:Date.now()}; componentDidMount(){setInterval(()=>this.setState({n:Date.now()}),1000)}; render(){return this.state.n+this.props.children}})
+const scope = { Button, Spin, Icon, Avatar, RedDiv, BlueDiv, GreenDiv, Dyna };
 
 const initialState = { code: "<div></div>" };
 
 export const ADD_CODE = "ADD_CODE"; //action
-export const INSERT_CODE_AT = "INSERT_CODE_AT"; //action
 export const DELETE_BY_ID = "DELETE_BY_ID"; //action
+export const FOSTER = "FOSTER"
 
 function reducer(state = initialState, action) {
 	//reducer
@@ -26,10 +30,11 @@ function reducer(state = initialState, action) {
 		case ADD_CODE: {			
 			return { code: insertCode(state.code, action.code) };
 		}
-		case INSERT_CODE_AT: {
-			let elem = getById(state.code, action.id)
-			let pos = state.code.indexOf(elem)+elem.lastIndexOf('<')
-			return { code: insertCodeAt(state.code, action.code, pos) }
+		case FOSTER: {
+			let child = getById(state.code, action.child)
+			let parent = getById(state.code, action.parent)
+			let pos = state.code.indexOf(parent)+parent.lastIndexOf('<')
+			return { code: insertCodeAt(state.code.replace(child, ''), child, pos) }
 		}
 		case DELETE_BY_ID: {
 			let elem = getById(state.code, action.id)
@@ -56,7 +61,11 @@ function _App(props) {
 	let tools = [{name:'Spin', code:'<Spin></Spin>'}, 
 					{name:'Button', code:'<Button>Button</Button>'},
 					{name:'Icon', code:'<Icon type="filter"></Icon>'}, 
-					{name:'Avatar', code:'<Avatar icon="user"></Avatar>'}
+					{name:'Avatar', code:'<Avatar icon="user"></Avatar>'},
+					{name: 'RedDiv', code:'<RedDiv></RedDiv>'},
+					{name: 'BlueDiv', code:'<BlueDiv></BlueDiv>'},
+					{name: 'GreenDiv', code:'<GreenDiv></GreenDiv>'},
+					{name:'Dyna', code:'<Dyna>{"it works!"}</Dyna>'}
 					]
 	return (
 		<DragDropContextProvider backend={HTML5Backend}>
@@ -83,12 +92,17 @@ function _App(props) {
 					</IButton>
 					})}
 				</Row>
-				<Row style={{ marginTop: "1em" }}>
-					<Col span={15}>
+				<Row>
+					<Col span={24}>
 						<LivePreview />
-					</Col>
-					<Col span={9}>
+					</Col>					
+				</Row>
+				<br/><br/><br/>
+				<Row>
+					<Col span={18}>
 						<LiveEditor />
+					</Col>
+					<Col span={6}>						
 						<LiveError />
 					</Col>
 				</Row>
@@ -118,16 +132,14 @@ const getById = (s, id)=>{
   let tagName = s.substring(c+1, s.indexOf('>', beginning))
   if (tagName.indexOf(' ')) tagName=tagName.substring(0, tagName.indexOf(' '))
   
-  let endTag = `</${tagName}>`
-  
-  let codeEnding = s.indexOf(endTag, beginning)+endTag.length
-  let ending = s.indexOf(endTag, codeEnding)+endTag.length
+  let endTag = `</${tagName}>`  
+  let ending = s.indexOf(endTag, s)+endTag.length
 
   return s.substring(beginning, ending)
 }
 
 
-const transformCode = code => code.substr(0,code.indexOf('>'))+ ` id={${Date.now()}} ` + ` code='${code}' ` + code.substr(code.indexOf('>'))
+const transformCode = code => code.substr(0,code.indexOf('>'))+ ` id={${Date.now()}} ` + code.substr(code.indexOf('>'))
 
 export const App = connect(
 	mapStateToProps,

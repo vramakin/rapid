@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "antd";
 import { DragSource, DropTarget } from "react-dnd";
-import { store, INSERT_CODE_AT, DELETE_BY_ID } from "./App";
+import { store, DELETE_BY_ID, FOSTER } from "./App";
 
 
 export const DnD = function(type) {
@@ -10,8 +10,7 @@ export const DnD = function(type) {
  */
 const buttonDragSource = {
   beginDrag(props) {
-    return {
-      code: props.code,
+    return {      
       id: props.id
     };
   }
@@ -30,18 +29,12 @@ function collect(connect, monitor) {
 const slateTarget = {
   //what happens when drop occurs
   drop(props, monitor) {
-    console.log("droppped", monitor.getItem(), "props", props);
-
+    console.log(monitor.getItem().id + ' will go into ' +  props.id)
     store.dispatch({
-      type: DELETE_BY_ID,      
-      id: monitor.getItem().id
-    })
-
-    store.dispatch({
-      type: INSERT_CODE_AT,
-      code: monitor.getItem().code,
-      id: props.id
-    })    
+      type: FOSTER,      
+      child: monitor.getItem().id,
+      parent: props.id,
+    })      
   }
 };
 

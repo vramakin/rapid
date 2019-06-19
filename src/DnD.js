@@ -53,9 +53,22 @@ class Wrapper extends React.Component {
       this.props.connectDragSource(
         <span
           onMouseOver={() => this.setState({ showInfo: true })}
-          onMouseOut={() => this.setState({ showInfo: false })}
-          style={this.state.style}
+          onMouseOut={() => this.setState({ showInfo: false })}          
         >
+        {this.props.isOver?<span
+            style={{
+              background: "rgba(200,200,200,0.5)",
+              border: "thin dashed #777",
+              borderRadius: "5px",              
+              position: "absolute",
+              top: "20",
+              left: "20",
+              zIndex: "100",
+              cursor: 'pointer'
+            }}
+          >
+            <Icon type="download" />       
+          </span>:null}
           <span
             style={{
               background: "rgba(200,200,200,0.5)",

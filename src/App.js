@@ -1,13 +1,15 @@
 import React from "react";
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
 import {
-	Row,
-	Col,
+	Row as IRow,
+	Col as ICol,
 	Button as IButton,
 	Avatar as IAvatar,
 	Icon as IIcon,
 	Spin as ISpin,
-	Switch as ISwitch
+	Switch as ISwitch,
+	Menu as IMenu,
+	Layout as ILayout
 } from "antd";
 import { DragDropContextProvider } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
@@ -15,11 +17,19 @@ import { createStore } from "redux";
 import { connect } from "react-redux";
 
 import { DnD } from "./DnD";
+import {PlainLayout, HeaderLayout} from './Layouts.js'
 
+const Layout = DnD(ILayout)
+const Content = DnD(ILayout.Content)
+const Header = DnD(ILayout.Header)
+const Footer = DnD(ILayout.Footer)
+const Menu = DnD(IMenu)
 const Avatar = DnD(IAvatar);
 const Button = DnD(IButton);
 const Icon = DnD(IIcon);
 const Spin = DnD(ISpin);
+const Row = DnD(IRow)
+const Col = DnD(ICol)
 const RedDiv = DnD(p => (
 	<div style={{ backgroundColor: "red", padding: "2em" }}>{p.children}</div>
 ));
@@ -40,18 +50,28 @@ const Dyna = DnD(
 		}
 	}
 );
-const scope = { Button, Spin, Icon, Avatar, RedDiv, BlueDiv, GreenDiv, Dyna };
+const scope = { Button, Spin, Icon, Avatar, RedDiv, BlueDiv, GreenDiv, Dyna, Layout, Header, Content, Footer, Menu, Row, Col };
 
 const initialState = { code: "<div></div>" };
 
 export const ADD_CODE = "ADD_CODE"; //action
 export const DELETE_BY_ID = "DELETE_BY_ID"; //action
 export const FOSTER = "FOSTER"; //action
+export const SET_LAYOUT = "SET_LAYOUT" //action
 
 function reducer(state = initialState, action) {
 	//reducer
 	switch (action.type) {
+		case SET_LAYOUT: {
+			return {code:action.layout}
+		}
 		case ADD_CODE: {
+			if(state.code.indexOf('HeaderLayoutContent')>-1) {
+				return {code:addChild(state.code, 'HeaderLayoutContent', action.code)}
+			}
+			if(state.code.indexOf('PlainLayoutContent')>-1) {
+				return {code:addChild(state.code, 'PlainLayoutContent', action.code)}
+			}
 			return { code: insertCode(state.code, action.code) };
 		}
 		case FOSTER: {
@@ -102,14 +122,14 @@ class _App extends React.Component {
 		return (
 			<DragDropContextProvider backend={HTML5Backend}>
 				<LiveProvider code={this.props.code} scope={scope}>
-					<Row
+					<IRow
 						style={{
 							padding: "0.5em",
 							backgroundColor: "#fdfdfd",
 							borderBottom: "thin solid #ccc"
 						}}
 					>
-						<Col span={1}>
+						<ICol span={1}>
 							<svg
 								style={{ marginRight: "1em" }}
 								height="20px"
@@ -122,8 +142,13 @@ class _App extends React.Component {
 									d="M464 4.3L16 262.7C-7 276-4.7 309.9 19.8 320L160 378v102c0 30.2 37.8 43.3 56.7 20.3l60.7-73.8 126.4 52.2c19.1 7.9 40.7-4.2 43.8-24.7l64-417.1C515.7 10.2 487-9 464 4.3zM192 480v-88.8l54.5 22.5L192 480zm224-30.9l-206.2-85.2 199.5-235.8c4.8-5.6-2.9-13.2-8.5-8.4L145.5 337.3 32 290.5 480 32l-64 417.1z"
 								/>
 							</svg>
-						</Col>
-						<Col span={22}>
+						</ICol>
+						<ICol span={2}>
+						<IButton size="small" onClick={()=>store.dispatch({type:SET_LAYOUT, layout:PlainLayout})}><IIcon type="border" /></IButton>
+						<IButton size="small" onClick={()=>store.dispatch({type:SET_LAYOUT, layout:HeaderLayout})}><IIcon type="credit-card" /></IButton>
+						<IButton size="small"><IIcon type="layout" /></IButton>
+						</ICol>
+						<ICol span={20}>
 							{tools.map((t,i) => {
 								return (
 									<IButton
@@ -140,8 +165,8 @@ class _App extends React.Component {
 									</IButton>
 								);
 							})}
-						</Col>
-						<Col span={1} style={{ textAlign: "right" }}>
+						</ICol>
+						<ICol span={1} style={{ textAlign: "right" }}>
 							<ISwitch
 								checkedChildren="X"
 								unCheckedChildren="<>"
@@ -152,13 +177,13 @@ class _App extends React.Component {
 									})
 								}
 							/>
-						</Col>
-					</Row>
-					<Row>
-						<Col span={this.state.codeVisible ? 18 : 24}>
+						</ICol>
+					</IRow>
+					<IRow>
+						<ICol span={this.state.codeVisible ? 18 : 24}>
 							<LivePreview />
-						</Col>
-						<Col
+						</ICol>
+						<ICol
 							span={this.state.codeVisible ? 6 : 0}
 							style={{
 								height: "94vh",
@@ -167,8 +192,8 @@ class _App extends React.Component {
 						>
 							<LiveEditor />
 							<LiveError />
-						</Col>
-					</Row>
+						</ICol>
+					</IRow>
 				</LiveProvider>
 			</DragDropContextProvider>
 		);
@@ -200,10 +225,17 @@ const getById = (s, id) => {
 		tagName = tagName.substring(0, tagName.indexOf(" "));
 
 	let endTag = `</${tagName}>`;
-	let ending = s.indexOf(endTag, s) + endTag.length;
+	let ending = s.indexOf(endTag, beginning) + endTag.length;	
 
 	return s.substring(beginning, ending);
 };
+
+const addChild = (code, pid, childCode)=>{	
+	let parent = getById(code, pid);
+	let pos = code.indexOf(parent) + parent.lastIndexOf("<");
+		
+	return insertCodeAt(code, childCode, pos)	
+}
 
 const transformCode = code =>
 	code.substr(0, code.indexOf(">")) +

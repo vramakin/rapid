@@ -151,11 +151,13 @@ class _App extends React.Component {
 					{ name: "Button", code: "<Button>Button</Button>" },
 					{
 						name: "Primary",
-						code: "<Button type='primary'>Primary</Button>"
+						code: "<Button type='primary'>Primary</Button>",
+						sample:<IButton type="primary">Primary</IButton>
 					},
 					{
 						name: "Dashed",
-						code: "<Button type='dashed'>Dashed</Button>"
+						code: "<Button type='dashed'>Dashed</Button>",
+						sample:<IButton type="dashed">Dashed</IButton>
 					}
 				]
 			},
@@ -251,20 +253,21 @@ class _App extends React.Component {
 											content={t.collection
 												.slice(1)
 												.map((u, j) => (
-													<IButton
-														key={j}
-														size="small"
-														onClick={() =>
+													<span onClick={() =>
 															store.dispatch({
 																type: ADD_CODE,
 																code: transformCode(
 																	u.code
 																)
 															})
-														}
+														}>{
+													u.sample?u.sample:
+													<IButton
+														key={j}
+														size="small"														
 													>
 														{u.name}
-													</IButton>
+													</IButton>}</span>
 												))}
 										>
 											<IButton
@@ -285,6 +288,7 @@ class _App extends React.Component {
 									);
 								} else
 									return (
+										t.sample?t.sample:
 										<IButton
 											key={i}
 											size="small"

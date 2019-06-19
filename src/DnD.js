@@ -28,8 +28,7 @@ function collect(connect, monitor) {
 
 const slateTarget = {
   //what happens when drop occurs
-  drop(props, monitor) {
-    console.log(monitor.getItem().id + ' will go into ' +  props.id)
+  drop(props, monitor) {    
     store.dispatch({
       type: FOSTER,      
       child: monitor.getItem().id,

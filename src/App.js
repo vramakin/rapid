@@ -46,7 +46,7 @@ const initialState = { code: "<div></div>" };
 
 export const ADD_CODE = "ADD_CODE"; //action
 export const DELETE_BY_ID = "DELETE_BY_ID"; //action
-export const FOSTER = "FOSTER";
+export const FOSTER = "FOSTER"; //action
 
 function reducer(state = initialState, action) {
 	//reducer
@@ -57,10 +57,11 @@ function reducer(state = initialState, action) {
 		case FOSTER: {
 			let child = getById(state.code, action.child);
 			let parent = getById(state.code, action.parent);
-			let pos = state.code.indexOf(parent) + parent.lastIndexOf("<");
-			console.log(parent, pos);
+			let codeWithoutChild = state.code.replace(child, "")
+			let pos = codeWithoutChild.indexOf(parent) + parent.lastIndexOf("<");
+			
 			return {
-				code: insertCodeAt(state.code.replace(child, ""), child, pos)
+				code: insertCodeAt(codeWithoutChild, child, pos)
 			};
 		}
 		case DELETE_BY_ID: {
@@ -123,9 +124,10 @@ class _App extends React.Component {
 							</svg>
 						</Col>
 						<Col span={22}>
-							{tools.map(t => {
+							{tools.map((t,i) => {
 								return (
 									<IButton
+										key={i}
 										size="small"
 										onClick={() =>
 											store.dispatch({

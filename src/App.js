@@ -9,7 +9,8 @@ import {
 	Spin as ISpin,
 	Switch as ISwitch,
 	Menu as IMenu,
-	Layout as ILayout
+	Layout as ILayout,
+	Radio
 } from "antd";
 import { DragDropContextProvider } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
@@ -52,7 +53,7 @@ const Dyna = DnD(
 );
 const scope = { Button, Spin, Icon, Avatar, RedDiv, BlueDiv, GreenDiv, Dyna, Layout, Header, Content, Footer, Menu, Row, Col };
 
-const initialState = { code: "<div></div>" };
+const initialState = { code: PlainLayout };
 
 export const ADD_CODE = "ADD_CODE"; //action
 export const DELETE_BY_ID = "DELETE_BY_ID"; //action
@@ -144,9 +145,11 @@ class _App extends React.Component {
 							</svg>
 						</ICol>
 						<ICol span={2}>
-						<IButton size="small" onClick={()=>store.dispatch({type:SET_LAYOUT, layout:PlainLayout})}><IIcon type="border" /></IButton>
-						<IButton size="small" onClick={()=>store.dispatch({type:SET_LAYOUT, layout:HeaderLayout})}><IIcon type="credit-card" /></IButton>
-						<IButton size="small"><IIcon type="layout" /></IButton>
+						<Radio.Group onChange={e=>e.target.value==='a'?store.dispatch({type:SET_LAYOUT, layout:PlainLayout}):store.dispatch({type:SET_LAYOUT, layout:HeaderLayout})} value={this.props.code.indexOf('PlainLayoutContent')>-1?'a':'b'} size="small">
+					        <Radio.Button value="a"><IIcon type="border" /></Radio.Button>
+					        <Radio.Button value="b"><IIcon type="credit-card" /></Radio.Button>
+					        <Radio.Button value="c"><IIcon type="layout" /></Radio.Button>					        
+					      </Radio.Group>						
 						</ICol>
 						<ICol span={20}>
 							{tools.map((t,i) => {

@@ -10,7 +10,9 @@ import {
 	Switch as ISwitch,
 	Menu as IMenu,
 	Layout as ILayout,
-	Radio
+	Radio,
+	Select,
+	Popover
 } from "antd";
 import { DragDropContextProvider } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
@@ -18,19 +20,22 @@ import { createStore } from "redux";
 import { connect } from "react-redux";
 
 import { DnD } from "./DnD";
-import {PlainLayout, HeaderLayout} from './Layouts.js'
 
-const Layout = DnD(ILayout)
-const Content = DnD(ILayout.Content)
-const Header = DnD(ILayout.Header)
-const Footer = DnD(ILayout.Footer)
-const Menu = DnD(IMenu)
+import { PlainLayout, HeaderLayout } from "./Layouts.js";
+
+const { Option } = Select;
+
+const Layout = DnD(ILayout);
+const Content = DnD(ILayout.Content);
+const Header = DnD(ILayout.Header);
+const Footer = DnD(ILayout.Footer);
+const Menu = DnD(IMenu);
 const Avatar = DnD(IAvatar);
 const Button = DnD(IButton);
 const Icon = DnD(IIcon);
 const Spin = DnD(ISpin);
-const Row = DnD(IRow)
-const Col = DnD(ICol)
+const Row = DnD(IRow);
+const Col = DnD(ICol);
 const RedDiv = DnD(p => (
 	<div style={{ backgroundColor: "red", padding: "2em" }}>{p.children}</div>
 ));
@@ -51,36 +56,65 @@ const Dyna = DnD(
 		}
 	}
 );
-const scope = { Button, Spin, Icon, Avatar, RedDiv, BlueDiv, GreenDiv, Dyna, Layout, Header, Content, Footer, Menu, Row, Col };
+const scope = {
+	Button,
+	Spin,
+	Icon,
+	Avatar,
+	RedDiv,
+	BlueDiv,
+	GreenDiv,
+	Dyna,
+	Layout,
+	Header,
+	Content,
+	Footer,
+	Menu,
+	Row,
+	Col
+};
 
 const initialState = { code: PlainLayout };
 
 export const ADD_CODE = "ADD_CODE"; //action
 export const DELETE_BY_ID = "DELETE_BY_ID"; //action
 export const FOSTER = "FOSTER"; //action
-export const SET_LAYOUT = "SET_LAYOUT" //action
+export const SET_LAYOUT = "SET_LAYOUT"; //action
 
 function reducer(state = initialState, action) {
 	//reducer
 	switch (action.type) {
 		case SET_LAYOUT: {
-			return {code:action.layout}
+			return { code: action.layout };
 		}
 		case ADD_CODE: {
-			if(state.code.indexOf('HeaderLayoutContent')>-1) {
-				return {code:addChild(state.code, 'HeaderLayoutContent', action.code)}
+			if (state.code.indexOf("HeaderLayoutContent") > -1) {
+				return {
+					code: addChild(
+						state.code,
+						"HeaderLayoutContent",
+						action.code
+					)
+				};
 			}
-			if(state.code.indexOf('PlainLayoutContent')>-1) {
-				return {code:addChild(state.code, 'PlainLayoutContent', action.code)}
+			if (state.code.indexOf("PlainLayoutContent") > -1) {
+				return {
+					code: addChild(
+						state.code,
+						"PlainLayoutContent",
+						action.code
+					)
+				};
 			}
 			return { code: insertCode(state.code, action.code) };
 		}
 		case FOSTER: {
 			let child = getById(state.code, action.child);
 			let parent = getById(state.code, action.parent);
-			let codeWithoutChild = state.code.replace(child, "")
-			let pos = codeWithoutChild.indexOf(parent) + parent.lastIndexOf("<");
-			
+			let codeWithoutChild = state.code.replace(child, "");
+			let pos =
+				codeWithoutChild.indexOf(parent) + parent.lastIndexOf("<");
+
 			return {
 				code: insertCodeAt(codeWithoutChild, child, pos)
 			};
@@ -112,12 +146,28 @@ class _App extends React.Component {
 	render() {
 		let tools = [
 			{ name: "Spin", code: "<Spin></Spin>" },
-			{ name: "Button", code: "<Button>Button</Button>" },
+			{
+				collection: [
+					{ name: "Button", code: "<Button>Button</Button>" },
+					{
+						name: "Primary",
+						code: "<Button type='primary'>Primary</Button>"
+					},
+					{
+						name: "Dashed",
+						code: "<Button type='dashed'>Dashed</Button>"
+					}
+				]
+			},
 			{ name: "Icon", code: '<Icon type="filter"></Icon>' },
 			{ name: "Avatar", code: '<Avatar icon="user"></Avatar>' },
-			{ name: "RedDiv", code: "<RedDiv></RedDiv>" },
-			{ name: "BlueDiv", code: "<BlueDiv></BlueDiv>" },
-			{ name: "GreenDiv", code: "<GreenDiv></GreenDiv>" },
+			{
+				collection: [
+					{ name: "RedDiv", code: "<RedDiv></RedDiv>" },
+					{ name: "BlueDiv", code: "<BlueDiv></BlueDiv>" },
+					{ name: "GreenDiv", code: "<GreenDiv></GreenDiv>" }
+				]
+			},
 			{ name: "Dyna", code: '<Dyna>{"it works!"}</Dyna>' }
 		];
 		return (
@@ -144,29 +194,110 @@ class _App extends React.Component {
 								/>
 							</svg>
 						</ICol>
-						<ICol span={2}>
-						<Radio.Group onChange={e=>e.target.value==='a'?store.dispatch({type:SET_LAYOUT, layout:PlainLayout}):store.dispatch({type:SET_LAYOUT, layout:HeaderLayout})} value={this.props.code.indexOf('PlainLayoutContent')>-1?'a':'b'} size="small">
-					        <Radio.Button value="a"><IIcon type="border" /></Radio.Button>
-					        <Radio.Button value="b"><IIcon type="credit-card" /></Radio.Button>
-					        <Radio.Button value="c"><IIcon type="layout" /></Radio.Button>					        
-					      </Radio.Group>						
+						<ICol span={3}>
+							<Select
+								defaultValue="/"
+								style={{ width: 120 }}
+								size="small"
+								disabled
+							>
+								<Option value="/">/</Option>
+							</Select>
 						</ICol>
-						<ICol span={20}>
-							{tools.map((t,i) => {
-								return (
-									<IButton
-										key={i}
-										size="small"
-										onClick={() =>
-											store.dispatch({
-												type: ADD_CODE,
-												code: transformCode(t.code)
-											})
-										}
-									>
-										{t.name}
-									</IButton>
-								);
+						<ICol span={3}>
+							<Radio.Group
+								onChange={e =>
+									e.target.value === "a"
+										? store.dispatch({
+												type: SET_LAYOUT,
+												layout: PlainLayout
+										  })
+										: store.dispatch({
+												type: SET_LAYOUT,
+												layout: HeaderLayout
+										  })
+								}
+								value={
+									this.props.code.indexOf(
+										"PlainLayoutContent"
+									) > -1
+										? "a"
+										: "b"
+								}
+								size="small"
+							>
+								<Radio.Button value="a">
+									<IIcon type="border" />
+								</Radio.Button>
+								<Radio.Button value="b">
+									<IIcon type="credit-card" />
+								</Radio.Button>
+								<Radio.Button value="c">
+									<IIcon type="layout" />
+								</Radio.Button>
+							</Radio.Group>
+							<IButton
+								style={{ marginLeft: "0.5em" }}
+								size="small"
+							>
+								<IIcon type="table" />
+							</IButton>
+						</ICol>
+						<ICol span={16}>
+							{tools.map((t, i) => {
+								if (t.collection) {
+									return (
+										<Popover
+											content={t.collection
+												.slice(1)
+												.map((u, j) => (
+													<IButton
+														key={j}
+														size="small"
+														onClick={() =>
+															store.dispatch({
+																type: ADD_CODE,
+																code: transformCode(
+																	u.code
+																)
+															})
+														}
+													>
+														{u.name}
+													</IButton>
+												))}
+										>
+											<IButton
+												key={0}
+												size="small"
+												onClick={() =>
+													store.dispatch({
+														type: ADD_CODE,
+														code: transformCode(
+															t.collection[0].code
+														)
+													})
+												}
+											>
+												{t.collection[0].name}
+											</IButton>
+										</Popover>
+									);
+								} else
+									return (
+										<IButton
+											key={i}
+											size="small"
+											onClick={() =>
+												store.dispatch({
+													type: ADD_CODE,
+													code: transformCode(t.code)
+												})
+											}
+										>
+											{t.name}
+										</IButton>
+									);
 							})}
 						</ICol>
 						<ICol span={1} style={{ textAlign: "right" }}>
@@ -228,17 +359,17 @@ const getById = (s, id) => {
 		tagName = tagName.substring(0, tagName.indexOf(" "));
 
 	let endTag = `</${tagName}>`;
-	let ending = s.indexOf(endTag, beginning) + endTag.length;	
+	let ending = s.indexOf(endTag, beginning) + endTag.length;
 
 	return s.substring(beginning, ending);
 };
 
-const addChild = (code, pid, childCode)=>{	
+const addChild = (code, pid, childCode) => {
 	let parent = getById(code, pid);
 	let pos = code.indexOf(parent) + parent.lastIndexOf("<");
-		
-	return insertCodeAt(code, childCode, pos)	
-}
+
+	return insertCodeAt(code, childCode, pos);
+};
 
 const transformCode = code =>
 	code.substr(0, code.indexOf(">")) +

@@ -66,7 +66,8 @@ class Wrapper extends React.Component {
               position: "absolute",
               top: "20",
               left: "20",
-              zIndex: "100"
+              zIndex: "100",
+              cursor: 'pointer'
             }}
           >
             <Icon type="edit" />

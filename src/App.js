@@ -152,12 +152,12 @@ class _App extends React.Component {
 					{
 						name: "Primary",
 						code: "<Button type='primary'>Primary</Button>",
-						sample:<IButton type="primary">Primary</IButton>
+						sample: <IButton type="primary">Primary</IButton>
 					},
 					{
 						name: "Dashed",
 						code: "<Button type='dashed'>Dashed</Button>",
-						sample:<IButton type="dashed">Dashed</IButton>
+						sample: <IButton type="dashed">Dashed</IButton>
 					}
 				]
 			},
@@ -166,8 +166,30 @@ class _App extends React.Component {
 			{
 				collection: [
 					{ name: "RedDiv", code: "<RedDiv></RedDiv>" },
-					{ name: "BlueDiv", code: "<BlueDiv></BlueDiv>" },
-					{ name: "GreenDiv", code: "<GreenDiv></GreenDiv>" }
+					{
+						name: "BlueDiv",
+						code: "<BlueDiv></BlueDiv>",
+						sample: (
+							<div
+								style={{
+									backgroundColor: "blue",
+									padding: "1em"
+								}}
+							/>
+						)
+					},
+					{
+						name: "GreenDiv",
+						code: "<GreenDiv></GreenDiv>",
+						sample: (
+							<div
+								style={{
+									backgroundColor: "green",
+									padding: "1em"
+								}}
+							/>
+						)
+					}
 				]
 			},
 			{ name: "Dyna", code: '<Dyna>{"it works!"}</Dyna>' }
@@ -253,21 +275,31 @@ class _App extends React.Component {
 											content={t.collection
 												.slice(1)
 												.map((u, j) => (
-													<span onClick={() =>
+													<span
+														style={{
+															margin: "0.25em",
+															cursor: "pointer"
+														}}
+														onClick={() =>
 															store.dispatch({
 																type: ADD_CODE,
 																code: transformCode(
 																	u.code
 																)
 															})
-														}>{
-													u.sample?u.sample:
-													<IButton
-														key={j}
-														size="small"														
+														}
 													>
-														{u.name}
-													</IButton>}</span>
+														{u.sample ? (
+															u.sample
+														) : (
+															<IButton
+																key={j}
+																size="small"
+															>
+																{u.name}
+															</IButton>
+														)}
+													</span>
 												))}
 										>
 											<IButton
@@ -288,7 +320,6 @@ class _App extends React.Component {
 									);
 								} else
 									return (
-										t.sample?t.sample:
 										<IButton
 											key={i}
 											size="small"

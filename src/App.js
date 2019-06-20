@@ -12,7 +12,8 @@ import {
 	Layout as ILayout,
 	Radio,
 	Select,
-	Popover
+	Popover,
+	Table
 } from "antd";
 import { DragDropContextProvider } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
@@ -22,6 +23,7 @@ import { connect } from "react-redux";
 import { DnD } from "./DnD";
 
 import { PlainLayout, HeaderLayout } from "./Layouts.js";
+import {tools} from './tools'
 
 const { Option } = Select;
 
@@ -71,7 +73,8 @@ const scope = {
 	Footer,
 	Menu,
 	Row,
-	Col
+	Col,
+	Table
 };
 
 const initialState = { code: PlainLayout };
@@ -80,10 +83,19 @@ export const ADD_CODE = "ADD_CODE"; //action
 export const DELETE_BY_ID = "DELETE_BY_ID"; //action
 export const FOSTER = "FOSTER"; //action
 export const SET_LAYOUT = "SET_LAYOUT"; //action
+export const TOGGLE_GRID_VIEW = "TOGGLE_GRID_VIEW" //action
 
 function reducer(state = initialState, action) {
 	//reducer
 	switch (action.type) {
+		case TOGGLE_GRID_VIEW: {
+			if(state.code.indexOf('grid-show-border')>-1) {
+				return {code:replaceAll(state.code, 'grid-show-border', 'grid-show-no-border')}
+			}
+			else
+				return {code:replaceAll(state.code, 'grid-show-no-border', 'grid-show-border')}
+
+		}
 		case SET_LAYOUT: {
 			return { code: action.layout };
 		}
@@ -144,56 +156,6 @@ class _App extends React.Component {
 	state = { codeVisible: false };
 
 	render() {
-		let tools = [
-			{ name: "Spin", code: "<Spin></Spin>" },
-			{
-				collection: [
-					{ name: "Button", code: "<Button>Button</Button>" },
-					{
-						name: "Primary",
-						code: "<Button type='primary'>Primary</Button>",
-						sample: <IButton type="primary">Primary</IButton>
-					},
-					{
-						name: "Dashed",
-						code: "<Button type='dashed'>Dashed</Button>",
-						sample: <IButton type="dashed">Dashed</IButton>
-					}
-				]
-			},
-			{ name: "Icon", code: '<Icon type="filter"></Icon>' },
-			{ name: "Avatar", code: '<Avatar icon="user"></Avatar>' },
-			{
-				collection: [
-					{ name: "RedDiv", code: "<RedDiv></RedDiv>" },
-					{
-						name: "BlueDiv",
-						code: "<BlueDiv></BlueDiv>",
-						sample: (
-							<div
-								style={{
-									backgroundColor: "blue",
-									padding: "1em"
-								}}
-							/>
-						)
-					},
-					{
-						name: "GreenDiv",
-						code: "<GreenDiv></GreenDiv>",
-						sample: (
-							<div
-								style={{
-									backgroundColor: "green",
-									padding: "1em"
-								}}
-							/>
-						)
-					}
-				]
-			},
-			{ name: "Dyna", code: '<Dyna>{"it works!"}</Dyna>' }
-		];
 		return (
 			<DragDropContextProvider backend={HTML5Backend}>
 				<LiveProvider code={this.props.code} scope={scope}>
@@ -228,7 +190,7 @@ class _App extends React.Component {
 								<Option value="/">/</Option>
 							</Select>
 						</ICol>
-						<ICol span={3}>
+						<ICol span={2}>
 							<Radio.Group
 								onChange={e =>
 									e.target.value === "a"
@@ -259,21 +221,34 @@ class _App extends React.Component {
 								<Radio.Button value="c">
 									<IIcon type="layout" />
 								</Radio.Button>
-							</Radio.Group>
-							<IButton
+							</Radio.Group>							
+						</ICol>
+						<ICol span={2}>
+						<IButton
 								style={{ marginLeft: "0.5em" }}
 								size="small"
+								type="link"
 							>
 								<IIcon type="table" />
 							</IButton>
+
+						<ISwitch style={{marginLeft:"0.5em", marginTop:"-0.25em"}}
+								checkedChildren={<IIcon type="table" />}
+								unCheckedChildren={<IIcon type="table" />}
+								defaultChecked={this.props.code.indexOf('Row')===-1 || this.props.code.indexOf('grid-show-border'>-1)}
+								value={this.props.code.indexOf('Row')===-1 || this.props.code.indexOf('grid-show-border'>-1)}
+								onChange={() => store.dispatch({
+																type: TOGGLE_GRID_VIEW																
+															})
+								}
+							/>
 						</ICol>
-						<ICol span={16}>
+						<ICol span={15}>
 							{tools.map((t, i) => {
 								if (t.collection) {
 									return (
 										<Popover
-											content={t.collection
-												.slice(1)
+											content={t.collection												
 												.map((u, j) => (
 													<span
 														style={{
@@ -336,8 +311,8 @@ class _App extends React.Component {
 							})}
 						</ICol>
 						<ICol span={1} style={{ textAlign: "right" }}>
-							<ISwitch
-								checkedChildren="X"
+						<ISwitch
+								checkedChildren="<>"
 								unCheckedChildren="<>"
 								value={this.state.codeVisible}
 								onChange={() =>
@@ -346,7 +321,8 @@ class _App extends React.Component {
 									})
 								}
 							/>
-						</ICol>
+						
+							</ICol>						
 					</IRow>
 					<IRow>
 						<ICol span={this.state.codeVisible ? 18 : 24}>
@@ -406,10 +382,21 @@ const addChild = (code, pid, childCode) => {
 	return insertCodeAt(code, childCode, pos);
 };
 
-const transformCode = code =>
-	code.substr(0, code.indexOf(">")) +
+const transformCode = code => {
+	let intermediate = code.substr(0, code.indexOf(">")) +
 	` id={${Date.now()}} ` +
 	code.substr(code.indexOf(">"));
+
+	while(intermediate.indexOf("{generate}")>-1) {
+		intermediate = intermediate.replace("{generate}",`{${Date.now()}}`)
+	}
+
+	return intermediate
+}
+
+const replaceAll = function(s, search, replacement) {    
+    return s.replace(new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), 'g'), replacement);
+};
 
 export const App = connect(
 	mapStateToProps,

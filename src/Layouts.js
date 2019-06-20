@@ -1,4 +1,4 @@
-export const PlainLayout = `<div><Row id={1}><Col span={2} id={2}></Col><Col id="PlainLayoutContent" span={20}></Col><Col span={2} id={4}></Col></Row></div>`
+export const PlainLayout = `<div id="PlainLayoutContent"></div>`
 export const HeaderLayout = `<div><Layout id={1}>
     <Header id={2}>
       <div id={3} />

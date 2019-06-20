@@ -121,6 +121,7 @@ function reducer(state = initialState, action) {
 			return { code: insertCode(state.code, action.code) };
 		}
 		case FOSTER: {
+			console.log('add '+action.child+ ' into '+ action.parent)
 			let child = getById(state.code, action.child);
 			let parent = getById(state.code, action.parent);
 			let codeWithoutChild = state.code.replace(child, "");
@@ -384,11 +385,17 @@ const addChild = (code, pid, childCode) => {
 
 const transformCode = code => {
 	let intermediate = code.substr(0, code.indexOf(">")) +
-	` id={${Date.now()}} ` +
+	` id="${Date.now()}" ` +
 	code.substr(code.indexOf(">"));
-
+	
+	let prevId = ''
+	let i =0
 	while(intermediate.indexOf("{generate}")>-1) {
-		intermediate = intermediate.replace("{generate}",`{${Date.now()}}`)
+		let id = Date.now()
+		let idStr = `${id}-${i}`
+		if(id===prevId) {i++;idStr = `${id}-${i}`}
+		intermediate = intermediate.replace("{generate}",`"${idStr}"`)
+		prevId = id
 	}
 
 	return intermediate

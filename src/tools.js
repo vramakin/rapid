@@ -58,7 +58,7 @@ export const tools = [
 			},
 			{ name: "Dyna", code: '<Dyna>{"it works!"}</Dyna>' },
 			{name:"Grid", code:`
-			<Row><Col id="{generate}" span={8} className="grid-show-border"></Col><Col id="{generate}" span={8} className="grid-show-border"></Col><Col id="{generate}" span={8} className="grid-show-border"></Col></Row>`},
+			<Row><Col id={generate} span={8} className="grid-show-border"></Col><Col id={generate} span={8} className="grid-show-border"></Col><Col id={generate} span={8} className="grid-show-border"></Col></Row>`},
 			{name:"Table", code:`<Table dataSource={[
   {
     key: '1',

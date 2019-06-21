@@ -11,8 +11,7 @@ import {
 	Menu as IMenu,
 	Layout as ILayout,
 	Radio,
-	Select,
-	Popover,
+	Select,	
 	Table
 } from "antd";
 import { DragDropContextProvider } from "react-dnd";

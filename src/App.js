@@ -24,6 +24,7 @@ import { DnD } from "./DnD";
 
 import { PlainLayout, HeaderLayout } from "./Layouts.js";
 import {tools} from './tools'
+import Toolify from './Toolify'
 
 const { Option } = Select;
 
@@ -245,71 +246,7 @@ class _App extends React.Component {
 							/>
 						</ICol>
 						<ICol span={15}>
-							{tools.map((t, i) => {
-								if (t.collection) {
-									return (
-										<Popover
-											content={t.collection												
-												.map((u, j) => (
-													<span
-														style={{
-															margin: "0.25em",
-															cursor: "pointer"
-														}}
-														onClick={() =>
-															store.dispatch({
-																type: ADD_CODE,
-																code: transformCode(
-																	u.code
-																)
-															})
-														}
-													>
-														{u.sample ? (
-															u.sample
-														) : (
-															<IButton
-																key={j}
-																size="small"
-															>
-																{u.name}
-															</IButton>
-														)}
-													</span>
-												))}
-										>
-											<IButton
-												key={0}
-												size="small"
-												onClick={() =>
-													store.dispatch({
-														type: ADD_CODE,
-														code: transformCode(
-															t.collection[0].code
-														)
-													})
-												}
-											>
-												{t.collection[0].name}
-											</IButton>
-										</Popover>
-									);
-								} else
-									return (
-										<IButton
-											key={i}
-											size="small"
-											onClick={() =>
-												store.dispatch({
-													type: ADD_CODE,
-													code: transformCode(t.code)
-												})
-											}
-										>
-											{t.name}
-										</IButton>
-									);
-							})}
+							{tools.map((t, i) => Toolify(t,i))}
 						</ICol>
 						<ICol span={1} style={{ textAlign: "right" }}>
 						<ISwitch
@@ -383,23 +320,6 @@ const addChild = (code, pid, childCode) => {
 	return insertCodeAt(code, childCode, pos);
 };
 
-const transformCode = code => {
-	let intermediate = code.substr(0, code.indexOf(">")) +
-	` id="${Date.now()}" ` +
-	code.substr(code.indexOf(">"));
-	
-	let prevId = ''
-	let i =0
-	while(intermediate.indexOf("{generate}")>-1) {
-		let id = Date.now()
-		let idStr = `${id}-${i}`
-		if(id===prevId) {i++;idStr = `${id}-${i}`}
-		intermediate = intermediate.replace("{generate}",`"${idStr}"`)
-		prevId = id
-	}
-
-	return intermediate
-}
 
 const replaceAll = function(s, search, replacement) {    
     return s.replace(new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), 'g'), replacement);

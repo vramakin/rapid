@@ -3,79 +3,24 @@ import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
 import {
 	Row as IRow,
 	Col as ICol,
-	Button as IButton,
-	Avatar as IAvatar,
-	Icon as IIcon,
-	Spin as ISpin,
-	Switch as ISwitch,
-	Menu as IMenu,
-	Layout as ILayout,
+	Button as IButton,	
+	Icon as IIcon,	
+	Switch as ISwitch,	
 	Radio,
-	Select,	
-	Table
+	Select	
 } from "antd";
 import { DragDropContextProvider } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
 import { createStore } from "redux";
 import { connect } from "react-redux";
 
-import { DnD } from "./DnD";
+
 
 import { PlainLayout, HeaderLayout } from "./Layouts.js";
-import {tools} from './tools'
+import {tools, scope} from './tools'
 import Toolify from './Toolify'
 
 const { Option } = Select;
-
-const Layout = DnD(ILayout);
-const Content = DnD(ILayout.Content);
-const Header = DnD(ILayout.Header);
-const Footer = DnD(ILayout.Footer);
-const Menu = DnD(IMenu);
-const Avatar = DnD(IAvatar);
-const Button = DnD(IButton);
-const Icon = DnD(IIcon);
-const Spin = DnD(ISpin);
-const Row = DnD(IRow);
-const Col = DnD(ICol);
-const RedDiv = DnD(p => (
-	<div style={{ backgroundColor: "red", padding: "2em" }}>{p.children}</div>
-));
-const BlueDiv = DnD(p => (
-	<div style={{ backgroundColor: "blue", padding: "2em" }}>{p.children}</div>
-));
-const GreenDiv = DnD(p => (
-	<div style={{ backgroundColor: "green", padding: "2em" }}>{p.children}</div>
-));
-const Dyna = DnD(
-	class D extends React.Component {
-		state = { n: Date.now() };
-		componentDidMount() {
-			setInterval(() => this.setState({ n: Date.now() }), 1000);
-		}
-		render() {
-			return this.state.n + this.props.children;
-		}
-	}
-);
-const scope = {
-	Button,
-	Spin,
-	Icon,
-	Avatar,
-	RedDiv,
-	BlueDiv,
-	GreenDiv,
-	Dyna,
-	Layout,
-	Header,
-	Content,
-	Footer,
-	Menu,
-	Row,
-	Col,
-	Table
-};
 
 const initialState = { code: PlainLayout };
 

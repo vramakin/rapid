@@ -1,5 +1,69 @@
 import React from 'react'
-import {Button as IButton} from 'antd'
+import {
+	Row as IRow,
+	Col as ICol,
+	Button as IButton,
+	Avatar as IAvatar,
+	Icon as IIcon,
+	Spin as ISpin,	
+	Menu as IMenu,
+	Layout as ILayout,
+	Table
+} from "antd";
+
+import { DnD } from "./DnD";
+
+const Layout = DnD(ILayout);
+const Content = DnD(ILayout.Content);
+const Header = DnD(ILayout.Header);
+const Footer = DnD(ILayout.Footer);
+const Menu = DnD(IMenu);
+const Avatar = DnD(IAvatar);
+const Button = DnD(IButton);
+const Icon = DnD(IIcon);
+const Spin = DnD(ISpin);
+const Row = DnD(IRow);
+const Col = DnD(ICol);
+const RedDiv = DnD(p => (
+	<div style={{ backgroundColor: "red", padding: "2em" }}>{p.children}</div>
+));
+const BlueDiv = DnD(p => (
+	<div style={{ backgroundColor: "blue", padding: "2em" }}>{p.children}</div>
+));
+const GreenDiv = DnD(p => (
+	<div style={{ backgroundColor: "green", padding: "2em" }}>{p.children}</div>
+));
+const Dyna = DnD(
+	class D extends React.Component {
+		state = { n: Date.now() };
+		componentDidMount() {
+			setInterval(() => this.setState({ n: Date.now() }), 1000);
+		}
+		render() {
+			return this.state.n + this.props.children;
+		}
+	}
+);
+export const scope = {
+	Button,
+	Spin,
+	Icon,
+	Avatar,
+	RedDiv,
+	BlueDiv,
+	GreenDiv,
+	Dyna,
+	Layout,
+	Header,
+	Content,
+	Footer,
+	Menu,
+	Row,
+	Col,
+	Table
+};
+
+
 
 export const tools = [
 			{ name: "Spin", code: "<Spin></Spin>" },

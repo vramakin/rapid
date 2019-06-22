@@ -13,7 +13,9 @@ import {
 	Statistic as IStatistic
 } from "antd";
 
+import faker from 'faker'
 import { DnD } from "./DnD";
+import SuperTable from './SuperTable'
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -72,7 +74,9 @@ export const scope = {
 	Sider,
 	MenuItem,
 	SubMenu,
-	Title
+	Title,
+	faker,
+	SuperTable
 };
 
 export const tools = [
@@ -84,6 +88,7 @@ export const tools = [
 		]
 	},
 	{ name: "Title", code: "<Title>Dashboard</Title>" },
+	{name:'GTable', code:`<SuperTable cols={['rank', 'title', 'sitebit']} ></SuperTable>`},
 	{
 		collection: [
 			{
@@ -105,8 +110,8 @@ export const tools = [
 	},
 	{name:'Stat', code:`<Card>
           <Statistic
-            title="Active"
-            value={11.28}
+            title={faker.fake("{{commerce.department}}")}
+            value={Math.round(Math.random()*100*100)/100}
             precision={2}
             valueStyle={{ color: '#3f8600' }}
             prefix={<Icon type="arrow-up" />}

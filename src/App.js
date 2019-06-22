@@ -14,7 +14,7 @@ import HTML5Backend from "react-dnd-html5-backend";
 import { createStore } from "redux";
 import { connect } from "react-redux";
 
-import { PlainLayout, HeaderLayout } from "./Layouts.js";
+import { PlainLayout, HeaderLayout, SiderLayout } from "./Layouts.js";
 import {tools, scope} from './tools'
 import Toolify from './Toolify'
 
@@ -69,6 +69,15 @@ function reducer(state = initialState, action) {
 					code: addChild(
 						state.code,
 						"PlainLayoutContent",
+						action.code
+					)
+				};
+			}
+			if (state.code.indexOf("SiderLayoutContent") > -1) {
+				return {
+					code: addChild(
+						state.code,
+						"SiderLayoutContent",
 						action.code
 					)
 				};
@@ -148,23 +157,38 @@ class _App extends React.Component {
 						</ICol>
 						<ICol span={2}>
 							<Radio.Group
-								onChange={e =>
-									e.target.value === "a"
-										? store.dispatch({
+								onChange={e =>{
+									switch(e.target.value){
+										case "a": {
+											store.dispatch({
 												type: SET_LAYOUT,
 												layout: PlainLayout
 										  })
-										: store.dispatch({
+											break
+
+										}
+										case "b": {
+											store.dispatch({
 												type: SET_LAYOUT,
 												layout: HeaderLayout
 										  })
+											break
+										}
+										default: {
+											store.dispatch({
+												type: SET_LAYOUT,
+												layout: SiderLayout
+										  })
+											break
+										}
+
+									}
 								}
+							}
 								value={
 									this.props.code.indexOf(
 										"PlainLayoutContent"
-									) > -1
-										? "a"
-										: "b"
+									) > -1?"a":this.props.code.indexOf("HeaderLayoutContent")>-1?"b":"c"
 								}
 								size="small"
 							>

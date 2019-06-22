@@ -6,20 +6,20 @@ import {
 	Avatar as IAvatar,
 	Icon as IIcon,
 	Spin as ISpin,
-	Menu as IMenu,
-	Layout as ILayout,
+	Menu as IMenu,	
 	Table as ITable,
 	Card as ICard,
+	Layout,
 	Statistic as IStatistic
 } from "antd";
 
 import { DnD } from "./DnD";
 
-const Layout = DnD(ILayout);
-const Content = DnD(ILayout.Content);
-const Header = DnD(ILayout.Header);
-const Footer = DnD(ILayout.Footer);
+const { Header, Content, Footer, Sider } = Layout;
+
 const Menu = DnD(IMenu);
+const SubMenu = DnD(IMenu);
+const MenuItem = DnD(IMenu.Item)
 const Avatar = DnD(IAvatar);
 const Button = DnD(IButton);
 const Icon = DnD(IIcon);
@@ -67,7 +67,10 @@ export const scope = {
 	Col,
 	Table,
 	Card,
-	Statistic
+	Statistic,
+	Sider,
+	MenuItem,
+	SubMenu
 };
 
 export const tools = [

@@ -18,8 +18,8 @@ import { DnD } from "./DnD";
 const { Header, Content, Footer, Sider } = Layout;
 
 const Menu = DnD(IMenu);
-const SubMenu = DnD(IMenu);
-const MenuItem = DnD(IMenu.Item)
+const SubMenu = (IMenu);
+const MenuItem = (IMenu.Item)
 const Avatar = DnD(IAvatar);
 const Button = DnD(IButton);
 const Icon = DnD(IIcon);
@@ -49,6 +49,7 @@ const Dyna = DnD(
 		}
 	}
 );
+const Title = DnD(p=><h1 style={p.style}>{p.children}</h1>)
 export const scope = {
 	Button,
 	Spin,
@@ -70,7 +71,8 @@ export const scope = {
 	Statistic,
 	Sider,
 	MenuItem,
-	SubMenu
+	SubMenu,
+	Title
 };
 
 export const tools = [
@@ -81,7 +83,7 @@ export const tools = [
 			{ name: "Grid-1", code: "<Col className='grid-show-border' span={24}></Col>" }
 		]
 	},
-	{ name: "Title", code: "<h1>Dashboard</h1>" },
+	{ name: "Title", code: "<Title>Dashboard</Title>" },
 	{
 		collection: [
 			{
@@ -111,6 +113,9 @@ export const tools = [
             suffix="%"
           />
         </Card>`},
+        {
+        	name:'Card', code:"<Card></Card>"
+        },
 	{ name: "Icon", code: '<Icon type="filter"></Icon>' },
 	{ name: "Avatar", code: '<Avatar icon="user"></Avatar>' },
 	{

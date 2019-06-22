@@ -43,8 +43,7 @@ function reducer(state = initialState, action) {
 			return { code: action.layout };
 		}
 		case ADD_CODE: {
-			if(action.code.indexOf('Col')===-1 && state.code.match(/<Col[^<>]*><\/Col>/)) {
-				console.log('found empty col')
+			if(action.code.indexOf('Col')===-1 && state.code.match(/<Col[^<>]*><\/Col>/)) {				
 				let emptyColElem = state.code.match(/<Col[^<>]*><\/Col>/)[0]
 				let emptyColElemId = emptyColElem.match(/id=".*"/)[0].replace('id="',"").replace('"',"")
 

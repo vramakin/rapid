@@ -8,7 +8,9 @@ import {
 	Spin as ISpin,
 	Menu as IMenu,
 	Layout as ILayout,
-	Table
+	Table as ITable,
+	Card as ICard,
+	Statistic as IStatistic
 } from "antd";
 
 import { DnD } from "./DnD";
@@ -24,6 +26,9 @@ const Icon = DnD(IIcon);
 const Spin = DnD(ISpin);
 const Row = DnD(IRow);
 const Col = DnD(ICol);
+const Table = DnD(ITable)
+const Card = DnD(ICard)
+const Statistic = DnD(IStatistic)
 const RedDiv = DnD(p => (
 	<div style={{ backgroundColor: "red", padding: "2em" }}>{p.children}</div>
 ));
@@ -60,17 +65,20 @@ export const scope = {
 	Menu,
 	Row,
 	Col,
-	Table
+	Table,
+	Card,
+	Statistic
 };
 
 export const tools = [
 	{
 		collection: [
 			{ name: "Grid-1/4", code: "<Col className='grid-show-border' span={6}></Col>" },
-			{ name: "Grid-1/2", code: "<Col className='grid-show-border' span={12}></Col>" }
+			{ name: "Grid-1/2", code: "<Col className='grid-show-border' span={12}></Col>" },
+			{ name: "Grid-1", code: "<Col className='grid-show-border' span={24}></Col>" }
 		]
 	},
-	{ name: "Spin", code: "<Spin></Spin>" },
+	{ name: "Title", code: "<h1>Dashboard</h1>" },
 	{
 		collection: [
 			{
@@ -90,6 +98,16 @@ export const tools = [
 			}
 		]
 	},
+	{name:'Stat', code:`<Card>
+          <Statistic
+            title="Active"
+            value={11.28}
+            precision={2}
+            valueStyle={{ color: '#3f8600' }}
+            prefix={<Icon type="arrow-up" />}
+            suffix="%"
+          />
+        </Card>`},
 	{ name: "Icon", code: '<Icon type="filter"></Icon>' },
 	{ name: "Avatar", code: '<Avatar icon="user"></Avatar>' },
 	{

@@ -16,6 +16,10 @@ code {
 }
 
 .grid-show-border {
-	padding: 2em;
+	padding: 1em;
 	border: thin dotted #ccc;
+}
+
+.grid-show-no-border {
+  padding: 1em;  
 }

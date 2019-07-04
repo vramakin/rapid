@@ -118,7 +118,7 @@ export const store = createStore(
 ); //store
 
 class _App extends React.Component {
-	state = { codeVisible: false };
+	state = { codeVisible: false, quickStartStep:1 };
 
 	render() {
 		return (
@@ -155,9 +155,11 @@ class _App extends React.Component {
 								<Option value="/">/</Option>
 							</Select>
 						</ICol>
-						<ICol span={2}>
+						<ICol span={4} style={{display:this.state.quickStartStep!==1?"none":""}}><h4>1. Choose an overall layout for your site</h4></ICol>
+						<ICol span={2} style={{display:(this.state.quickStartStep===1 || this.state.quickStartStep===-1)?"":"none"}}>
 							<Radio.Group
 								onChange={e =>{
+									if(this.state.quickStartStep===1) this.setState({quickStartStep:2})
 									switch(e.target.value){
 										case "a": {
 											store.dispatch({
@@ -203,11 +205,13 @@ class _App extends React.Component {
 								</Radio.Button>
 							</Radio.Group>							
 						</ICol>
-						<ICol span={2}>
+						<ICol span={4} style={{display:this.state.quickStartStep!==2?"none":""}}><h4>2. Choose a layout for your content</h4></ICol>
+						<ICol span={2} style={{display:(this.state.quickStartStep===2 || this.state.quickStartStep===-1)?"":"none"}}>						
 						<IButton
 								style={{ marginLeft: "0.5em" }}
 								size="small"
 								type="link"
+								onClick={()=>this.state.quickStartStep===2?this.setState({quickStartStep:3}, ()=>setTimeout(()=>this.setState({quickStartStep:-1}),3000)):null}
 							>
 								<IIcon type="table" />
 							</IButton>
@@ -223,7 +227,8 @@ class _App extends React.Component {
 								}
 							/>
 						</ICol>
-						<ICol span={15}>
+						<ICol span={4} style={{display:this.state.quickStartStep!==3?"none":""}}><h4>3. Add components to your page</h4></ICol>
+						<ICol span={15} style={{display:(this.state.quickStartStep===3 || this.state.quickStartStep===-1)?"":"none"}}>
 							{tools.map((t, i) => Toolify(t,i))}
 						</ICol>
 						<ICol span={1} style={{ textAlign: "right" }}>

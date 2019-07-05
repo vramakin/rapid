@@ -155,8 +155,9 @@ class _App extends React.Component {
 								<Option value="/">/</Option>
 							</Select>
 						</ICol>
-						<ICol span={2}>
-							<Radio.Group
+						<ICol span={4}>
+						<span style={{marginRight:"0.5em"}}>Overall Layout</span>
+							<Radio.Group								
 								onChange={e =>{
 									switch(e.target.value){
 										case "a": {
@@ -203,9 +204,9 @@ class _App extends React.Component {
 								</Radio.Button>
 							</Radio.Group>							
 						</ICol>
-						<ICol span={2}>
-						<IButton
-								style={{ marginLeft: "0.5em" }}
+						<ICol span={4}>
+						<span style={{marginRight:"0.5em"}}>Content Layout</span>
+						<IButton								
 								size="small"
 								type="link"
 							>
@@ -223,7 +224,7 @@ class _App extends React.Component {
 								}
 							/>
 						</ICol>
-						<ICol span={15}>
+						<ICol span={11}> <span style={{marginRight:"0.5em"}}>Components</span>
 							{tools.map((t, i) => Toolify(t,i))}
 						</ICol>
 						<ICol span={1} style={{ textAlign: "right" }}>

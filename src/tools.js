@@ -16,6 +16,7 @@ import {
 import faker from 'faker'
 import { DnD } from "./DnD";
 import SuperTable from './SuperTable'
+import { VictoryBar as IVictoryBar, VictoryLine as IVictoryLine, VictoryPie as IVictoryPie } from 'victory';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -52,6 +53,10 @@ const Dyna = DnD(
 	}
 );
 const Title = DnD(p=><h1 style={p.style}>{p.children}</h1>)
+const VictoryBar = DnD(IVictoryBar)
+const VictoryLine = DnD(IVictoryLine)
+const VictoryPie = DnD(IVictoryPie)
+
 export const scope = {
 	Button,
 	Spin,
@@ -76,7 +81,10 @@ export const scope = {
 	SubMenu,
 	Title,
 	faker,
-	SuperTable
+	SuperTable,
+	VictoryBar,
+	VictoryLine,
+	VictoryPie
 };
 
 export const tools = [
@@ -87,7 +95,7 @@ export const tools = [
 			{ name: "Grid-1", code: "<Col className='grid-show-border' span={24}></Col>" }
 		]
 	},
-	{ name: "Title", code: "<Title>Dashboard</Title>" },
+	{ name: "Title", code: "<Title>{faker.fake('{{name.jobArea}}')}</Title>" },
 	{name:'GTable', code:`<SuperTable cols={['rank', 'title', 'sitebit']} ></SuperTable>`},
 	{
 		collection: [
@@ -163,21 +171,49 @@ export const tools = [
 			}
 		]
 	},
-	{ name: "Dyna", code: '<Dyna>{"it works!"}</Dyna>' },
+	{ collection:[
+		{name: "BarChart", code: `<VictoryBar style={{ data: {fill: "tomato"}}} data={[
+    { x: 1, y: faker.random.number({min:1, max:10})},
+    { x: 2, y: faker.random.number({min:1, max:10}) },
+    { x: 3, y: faker.random.number({min:1, max:10})},
+    { x: 4, y: faker.random.number({min:1, max:10})},
+    { x: 5, y: faker.random.number({min:1, max:10})},
+    { x: 6, y: faker.random.number({min:1, max:10})},
+    { x: 7, y: faker.random.number({min:1, max:10})}
+  ]} ></VictoryBar>` },
+		{name: "LineChart", code: `<VictoryLine style={{ data: {stroke: "tomato"}}} data={[
+      { x: 1, y: faker.random.number({min:1, max:10}) },
+      { x: 2, y: faker.random.number({min:1, max:10}) },
+      { x: 3, y: faker.random.number({min:1, max:10}) },
+      { x: 4, y: faker.random.number({min:1, max:10}) },
+      { x: 5, y: faker.random.number({min:1, max:10}) },
+      { x: 6, y: faker.random.number({min:1, max:10})},
+      { x: 7, y: faker.random.number({min:1, max:10})}
+    ]} ></VictoryLine>` },
+    {name:"Donut", code:`<VictoryPie  
+  innerRadius={100}
+  colorScale={["tomato", "lightgray" ]}
+  labels={[]}
+  data={[
+      { x: 1, y: faker.random.number({min:1, max:10}) },
+      { x: 2, y: faker.random.number({min:1, max:10}) },     
+    ]}
+></VictoryPie>`}
+	]},
 	{
 		name: "Table",
 		code: `<Table dataSource={[
   {
     key: '1',
-    name: 'Mike',
+    name: faker.fake("{{name.firstName}}"),
     age: 32,
-    address: '10 Downing Street',
+    address: faker.fake("{{address.streetAddress}}"),
   },
   {
     key: '2',
-    name: 'John',
-    age: 42,
-    address: '10 Downing Street',
+    name: faker.fake("{{name.firstName}}"),
+    age: 34,
+    address: faker.fake("{{address.streetAddress}}"),
   },
 ]} columns={[
   {
